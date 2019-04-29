@@ -113,7 +113,8 @@ def bookdetail(request,bookid,stuid):
     stu = StudentUser.objects.get(pk = stuid)
     book = Book.objects.get(pk = bookid)
     try:
-        reader = History.objects.get(book =book)
+        reader = History.objects.all().filter(book =book).filter(status = True)[0]
+        print(reader)
     except:
         reader = None
     if request.method == "GET":
@@ -122,12 +123,8 @@ def bookdetail(request,bookid,stuid):
     elif request.method == 'POST':
         if reader is None:
             error = None
-            borrow = History()
-            borrow.user = stu
-            borrow.book = book
-            borrow.status = True
-            borrow.save()
-            print(borrow)
+            saveborrowinfo(bookid,stuid)
+
             print(type(reader))
             return HttpResponseRedirect('/booklibrary/bookdetail/' + str(book.id) + '/' + str(stu.id) + '/',{"error": error})
 
@@ -136,6 +133,16 @@ def bookdetail(request,bookid,stuid):
             print("aaaaaaaaaaa")
             error = '借阅过'
             return render(request, 'booklibrary/reader_book.html', {"book": book, 'reader': reader, 'stu': stu, "error":error})
+
+
+def saveborrowinfo(bookid,stuid):
+    stu = StudentUser.objects.get(pk=stuid)
+    book = Book.objects.get(pk=bookid)
+    borrow = History()
+    borrow.user = stu
+    borrow.book = book
+    borrow.status = True
+    borrow.save()
 
 
 def show_borrows(request):
