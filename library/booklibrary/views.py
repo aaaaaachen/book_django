@@ -114,10 +114,12 @@ def bookdetail(request,bookid,stuid):
     book = Book.objects.get(pk = bookid)
     try:
         reader = History.objects.all().filter(book =book).filter(status = True)[0]
-        print(reader)
+        if reader.status == False:
+            reader = None
     except:
         reader = None
     if request.method == "GET":
+
 
         return render(request,'booklibrary/reader_book.html',{"book":book,'reader':reader,'stu':stu})
     elif request.method == 'POST':
@@ -130,8 +132,11 @@ def bookdetail(request,bookid,stuid):
 
             # return reader(request,'booklibrary/reader_book.html',{"book":book,'reader':reader,'stu':stu})
         else:
-            print("aaaaaaaaaaa")
-            error = '借阅过'
+            if reader.status:
+                print("aaaaaaaaaaa")
+                error = '借阅过'
+            else:
+                saveborrowinfo(bookid, stuid)
             return render(request, 'booklibrary/reader_book.html', {"book": book, 'reader': reader, 'stu': stu, "error":error})
 
 
