@@ -25,3 +25,12 @@ class History(models.Model):
      date_borrow = models.DateTimeField(default=datetime.now())
      date_return = models.DateTimeField(default=datetime.now()+timedelta(days=30))
      status = models.BooleanField()
+
+
+class Hotpic(models.Model):
+    name = models.CharField(max_length=20)
+    index = models.SmallIntegerField(unique=True)
+    pic = models.ImageField(upload_to='hotpic')
+
+    def __str__(self):
+        return self.name

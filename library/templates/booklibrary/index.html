@@ -7,4 +7,10 @@
 
 {% block body %}
   <h2>欢迎使用</h2>
+<div class="hotpic">
+  {% for pic in hotpics %}
+  <img src="/static/media/{{pic.pic.url}}" alt="无法加载">
+  {% empty %}
+  {% endfor %}
+</div>
 {% endblock %}

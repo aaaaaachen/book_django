@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'bookdetail/(.*?)/(.*?)/$',views.bookdetail,name='bookdetail'),
     # url(r'borrow/(.*?)/(.*?)/$',views.borrow,name='borrow'),
     url(r'show_borrows/$',views.show_borrows,name='show_borrows'),
+    url(r'upload/$',views.upload,name='upload'),
 
 ]

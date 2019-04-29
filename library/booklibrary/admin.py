@@ -22,3 +22,4 @@ class AdminHistory(admin.ModelAdmin):
     list_display = ['status','date_borrow','date_return']
 
 admin.site.register(History,AdminHistory)
+admin.site.register(Hotpic)

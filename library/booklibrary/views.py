@@ -5,7 +5,8 @@ from .models import *
 # Create your views here.
 
 def index(request):
-    return render(request,'booklibrary/index.html')
+    hotpics = Hotpic.objects.all().order_by('index')
+    return render(request,'booklibrary/index.html',{'hotpics':hotpics})
 
 
 def login(request):
@@ -24,8 +25,8 @@ def loginhandler(request):
         else:
             return render(request, 'booklibrary/reader_login.html', {'error': '密码错误'})
     except:
-        return HttpResponse('error')
-        # return render(request, 'booklibrary/reader_login.html', {'error': '用户名或密码错误'})
+        # return HttpResponse('error')
+        return render(request, 'booklibrary/reader_login.html', {'error': '用户名或密码错误'})
 
 def register(request):
     return render(request,'booklibrary/register.html')
@@ -140,6 +141,20 @@ def bookdetail(request,bookid,stuid):
 def show_borrows(request):
     borrows = History.objects.all()
     return render(request,'booklibrary/reader_histroy.html',{'histroys':borrows})
+
+
+def upload(request):
+    if request.method == 'GET':
+        return render(request,'booklibrary/reader_upload.html')
+    if request.method == 'POST':
+        name = request.POST['name']
+        index = request.POST['index']
+        pic = request.FILES['pic']
+
+        hot = Hotpic(name= name,index= index,pic = pic)
+        hot.save()
+        return redirect(reverse('booklibrary:index'))
+
 
 
 
