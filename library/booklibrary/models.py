@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import timedelta,datetime
+from tinymce.models import HTMLField
 # import datetime
 # Create your models here.
 class StudentUser(User):
@@ -34,3 +35,10 @@ class Hotpic(models.Model):
 
     def __str__(self):
         return self.name
+
+class Message(models.Model):
+    title = models.CharField(max_length=30)
+    message = HTMLField()
+
+    def __str__(self):
+        return self.title

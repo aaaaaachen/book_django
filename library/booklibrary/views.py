@@ -1,12 +1,14 @@
 from django.shortcuts import render,redirect,reverse
 from django.http import request,HttpResponse,HttpResponseRedirect
-
+from django.conf import settings
+from django.core.mail import send_mail,send_mass_mail
 from .models import *
 # Create your views here.
 
 def index(request):
     hotpics = Hotpic.objects.all().order_by('index')
-    return render(request,'booklibrary/index.html',{'hotpics':hotpics})
+    messages = Message.objects.all()
+    return render(request,'booklibrary/index.html',{'hotpics':hotpics,'messages':messages})
 
 
 def login(request):
@@ -18,12 +20,14 @@ def loginhandler(request):
     try:
         stu = StudentUser.objects.get(username=username)
         # print(stu.password,pwd)
-
-        if stu.password == pwd:
-            return render(request,'booklibrary/reader.html',{'stu':stu})
-            # return HttpResponse('success')
+        if stu.is_active:
+            if stu.password == pwd:
+                return render(request,'booklibrary/reader.html',{'stu':stu})
+                # return HttpResponse('success')
+            else:
+                return render(request, 'booklibrary/reader_login.html', {'error': '密码错误'})
         else:
-            return render(request, 'booklibrary/reader_login.html', {'error': '密码错误'})
+            return render(request, 'booklibrary/reader_login.html', {'error': '账户未激活'})
     except:
         # return HttpResponse('error')
         return render(request, 'booklibrary/reader_login.html', {'error': '用户名或密码错误'})
@@ -40,17 +44,23 @@ def registerhandler(request):
     email = request.POST['email']
     print(username,pwd,cpwd,college,sno,email)
 
-    if pwd == cpwd:
-        user = StudentUser()
-        user.username = username
-        user.password = pwd
-        user.college = college
-        user.sno = sno
-        user.email = email
+    try:
+        if pwd == cpwd:
+            user = StudentUser()
+            user.username = username
+            user.password = pwd
+            user.college = college
+            user.sno = sno
+            user.email = email
+            user.is_active = False
 
-        user.save()
 
-        return redirect(reverse('booklibrary:login'))
+            user.save()
+            id = StudentUser.objects.get(username = username).id
+            send_mail('激活账户', '<a href = "http://127.0.0.1:8000/booklibrary/active/%s">点击激活</a>' % (id,),settings.DEFAULT_FROM_EMAIL,[email])
+            return redirect(reverse('booklibrary:login'))
+    except:
+        return HttpResponse('error')
 
 
 def checkstuinfo(request,id):
@@ -166,6 +176,33 @@ def upload(request):
         hot = Hotpic(name= name,index= index,pic = pic)
         hot.save()
         return redirect(reverse('booklibrary:index'))
+
+
+def edit(request):
+    if request.method == 'GET':
+        return render(request,'booklibrary/edit.html')
+    elif request.method == 'POST':
+        title = request.POST['title']
+        message = request.POST['message']
+        msg = Message(title = title, message = message)
+        msg.save()
+        return redirect(reverse('booklibrary:index'))
+
+
+def email(request):
+    try:
+        send_mail('Django send email','django send email',settings.DEFAULT_FROM_EMAIL,['1195741928@qq.com'])
+    except:
+        return HttpResponse('send error')
+
+    return HttpResponse('send success')
+
+def active(request,id):
+    user = StudentUser.objects.get(id = id)
+    user.is_active = True
+    user.save()
+    return redirect(reverse('booklibrary:login'))
+
 
 
 

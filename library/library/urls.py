@@ -19,5 +19,11 @@ from django.conf.urls import url,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url('booklibrary/',include('booklibrary.urls',namespace='booklibrary')),
+    url('',include('booklibrary.urls',namespace='booklibrary')),
 ]
+
+from django.conf import settings
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns.append(url(r'^__debug__/', include(debug_toolbar.urls)))
+

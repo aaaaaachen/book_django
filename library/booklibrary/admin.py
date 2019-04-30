@@ -23,3 +23,4 @@ class AdminHistory(admin.ModelAdmin):
 
 admin.site.register(History,AdminHistory)
 admin.site.register(Hotpic)
+admin.site.register(Message)

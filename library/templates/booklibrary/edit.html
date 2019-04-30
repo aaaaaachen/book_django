@@ -1,0 +1,26 @@
+{% extends 'booklibrary/layout.html' %}
+
+{% block link %}
+<script src="/static/tiny_mce/tiny_mce.js"></script>
+<script>
+    tinyMCE.init({
+    'mode':'textareas',
+    'theme':'advanced',
+    'width':680,
+    'height':300
+    });
+</script>
+{% endblock %}
+{% block body %}
+    <h2>文本编辑</h2>
+    <form action="{% url 'booklibrary:edit' %}" method="post">
+        {% csrf_token %}
+        标题：<input type="text" name="title">
+        <br>
+        内容: <textarea name="message" id="" cols="30" rows="10">
+
+            </textarea>
+        <br>
+        <input type="submit" value="发布">
+    </form>
+{% endblock %}

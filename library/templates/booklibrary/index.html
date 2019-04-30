@@ -15,6 +15,17 @@
 <!--</div>-->
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 
+   <ol class="carousel-indicators">
+     {% for i in hotpics %}
+     {% if i.index == 1 %}
+    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+     {% else %}
+     <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+     {% endif %}
+     {% endfor %}
+
+  </ol>
+
   <div class="carousel-inner">
 
     {% for pic in hotpics %}
@@ -41,5 +52,11 @@
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="sr-only">Next</span>
   </a>
+</div>
+
+<div>
+    {% for message in messages %}
+        {{message.message|safe}}
+    {% endfor %}
 </div>
 {% endblock %}

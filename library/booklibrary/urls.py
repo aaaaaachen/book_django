@@ -17,5 +17,9 @@ urlpatterns = [
     # url(r'borrow/(.*?)/(.*?)/$',views.borrow,name='borrow'),
     url(r'show_borrows/$',views.show_borrows,name='show_borrows'),
     url(r'upload/$',views.upload,name='upload'),
+    url(r'edit/$',views.edit,name='edit'),
+    url(r'email/$',views.email,name='email'),
+    url(r'active/(\d+)/$',views.active,name='active'),
 
 ]
+
