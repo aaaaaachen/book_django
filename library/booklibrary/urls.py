@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'upload/$',views.upload,name='upload'),
     url(r'edit/$',views.edit,name='edit'),
     url(r'email/$',views.email,name='email'),
-    url(r'active/(\d+)/$',views.active,name='active'),
+    url(r'active/(.*?)/$',views.active,name='active'),
 
 ]
 

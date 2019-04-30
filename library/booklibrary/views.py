@@ -3,6 +3,7 @@ from django.http import request,HttpResponse,HttpResponseRedirect
 from django.conf import settings
 from django.core.mail import send_mail,send_mass_mail
 from .models import *
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer,SignatureExpired
 # Create your views here.
 
 def index(request):
@@ -57,7 +58,9 @@ def registerhandler(request):
 
             user.save()
             id = StudentUser.objects.get(username = username).id
-            send_mail('激活账户', '<a href = "http://127.0.0.1:8000/booklibrary/active/%s">点击激活</a>' % (id,),settings.DEFAULT_FROM_EMAIL,[email])
+            serutil = Serializer(settings.SECRET_KEY,300)
+            idstr = serutil.dumps({'userid':id}).decode('utf-8')
+            send_mail('激活账户', '<a href = "http://127.0.0.1:8000/booklibrary/active/%s">点击激活</a>' % (idstr,),settings.DEFAULT_FROM_EMAIL,[email])
             return redirect(reverse('booklibrary:login'))
     except:
         return HttpResponse('error')
@@ -197,11 +200,18 @@ def email(request):
 
     return HttpResponse('send success')
 
-def active(request,id):
-    user = StudentUser.objects.get(id = id)
-    user.is_active = True
-    user.save()
-    return redirect(reverse('booklibrary:login'))
+def active(request,idstr):
+    try:
+        dser = Serializer(settings.SECRET_KEY,300)
+        obj = dser.loads(idstr)
+        user = StudentUser.objects.get(id=obj['userid'])
+        user.is_active = True
+        user.save()
+        return redirect(reverse('booklibrary:login'))
+    except SignatureExpired as e:
+        return HttpResponse('error')
+
+
 
 
 
