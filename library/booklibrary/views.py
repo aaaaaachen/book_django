@@ -212,6 +212,13 @@ def active(request,idstr):
         return HttpResponse('error')
 
 
+def ajax(request):
+    return render(request,'booklibrary/ajax.html')
+
+def ajaxajax(request):
+    return HttpResponse('success')
+
+
 
 
 

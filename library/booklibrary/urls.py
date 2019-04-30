@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'edit/$',views.edit,name='edit'),
     url(r'email/$',views.email,name='email'),
     url(r'active/(.*?)/$',views.active,name='active'),
+    url(r'^ajax/$',views.ajax,name='ajax'),
+    url(r'^ajaxajax/$',views.ajaxajax,name='ajaxajax'),
 
 ]
 
