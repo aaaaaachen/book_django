@@ -148,3 +148,11 @@ INTERNAL_IPS = ("127.0.0.1",)
 
 
 APPEND_SLASH = False
+
+CACHES = {
+        "default": {
+        "BACKEND": "redis_cache.cache.RedisCache",
+        "LOCATION": "localhost:6379",
+        'TIMEOUT': 60,
+    },
+}

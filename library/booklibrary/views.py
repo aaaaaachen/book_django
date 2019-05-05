@@ -3,6 +3,8 @@ from django.http import request,HttpResponse,HttpResponseRedirect
 from django.conf import settings
 from django.core.mail import send_mail,send_mass_mail
 from .models import *
+from PIL import Image,ImageDraw,ImageFont
+import random,io
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer,SignatureExpired
 # Create your views here.
 
@@ -15,15 +17,22 @@ def index(request):
 def login(request):
     return render(request,'booklibrary/reader_login.html')
 
+
 def loginhandler(request):
     username = request.POST['username']
     pwd = request.POST['password']
+    verifycode = request.POST["verifycode"]
+
     try:
         stu = StudentUser.objects.get(username=username)
         # print(stu.password,pwd)
         if stu.is_active:
             if stu.password == pwd:
-                return render(request,'booklibrary/reader.html',{'stu':stu})
+                if verifycode == request.session["verifycode"]:
+                    return render(request, 'booklibrary/reader.html', {'stu': stu})
+                else:
+                    return HttpResponse("验证码错误")
+                # return render(request,'booklibrary/reader.html',{'stu':stu})
                 # return HttpResponse('success')
             else:
                 return render(request, 'booklibrary/reader_login.html', {'error': '密码错误'})
@@ -32,6 +41,46 @@ def loginhandler(request):
     except:
         # return HttpResponse('error')
         return render(request, 'booklibrary/reader_login.html', {'error': '用户名或密码错误'})
+
+
+def verify(request):
+    # 定义变量，用于画面的背景色、宽、高
+    bgcolor = (random.randrange(20,100),
+    random.randrange(20,100),
+    random.randrange(20,100))
+    width = 100
+    heigth = 25
+    # 创建画面对象
+    im = Image.new('RGB',(width,heigth),bgcolor)
+    # 创建画笔对象
+    draw = ImageDraw.Draw(im)
+    # 调用画笔的point()函数绘制噪点
+    for i in range(0, 100):
+        xy = (random.randrange(0, width), random.randrange(0, heigth))
+        fill = (random.randrange(0, 255), 255, random.randrange(0, 255))
+        draw.point(xy, fill=fill)
+    # 定义验证码的备选值
+    str1 = 'ABCD123EFGHIJK456LMNOPQRS789TUVWXYZ0'
+    # 随机选取4个值作为验证码
+    rand_str = ''
+    for i in range(0, 4):
+        rand_str += str1[random.randrange(0, len(str1))]
+    # 构造字体对象
+    font = ImageFont.truetype('pala.ttf', 23)
+    fontcolor = (255, random.randrange(0, 255), random.randrange(0, 255))
+    # 绘制4个字
+    draw.text((5, 2), rand_str[0], font=font, fill=fontcolor)
+    draw.text((25, 2), rand_str[1], font=font, fill=fontcolor)
+    draw.text((50, 2), rand_str[2], font=font, fill=fontcolor)
+    draw.text((75, 2), rand_str[3], font=font, fill=fontcolor)
+    # 释放画笔
+    del draw
+    request.session['verifycode'] = rand_str
+    f = io.BytesIO()
+    im.save(f,'png')
+    # 将内存中的图片数据返回给客户端，MIME类型为图片png
+    return HttpResponse(f.getvalue(), 'image/png')
+
 
 def register(request):
     return render(request,'booklibrary/register.html')
@@ -217,6 +266,10 @@ def ajax(request):
 
 def ajaxajax(request):
     return HttpResponse('success')
+
+
+def echarts(request):
+    return render(request,'booklibrary/echarts.html')
 
 
 

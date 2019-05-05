@@ -1,5 +1,19 @@
 {% extends "booklibrary/layout.html" %}
 {% block title %} 读者登录 {% endblock %}
+{% block linkcss %}
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script>
+		 $(function() {
+
+			$("#verify").click(function () {
+				this.src = '/verify/'+'?time='+new Date().getTime()
+			})
+
+        })
+
+	</script>
+{% endblock %}
+
 {% block link %}
 	<a href=""> 返回   </a>|
 	<a href="{% url 'booklibrary:register' %}"> 注册 </a>
@@ -11,13 +25,15 @@
 	  <strong>Error : </strong> {{error}}
 	</div>
 	{% endif%}
-	<form action="{% url 'booklibrary:loginhandler' %}" method=post>
+	<form action="{% url 'booklibrary:loginhandler' %}" method=post id="load">
 		{% csrf_token %}
 	  <dl>
 	    <dt>用户名: </dt>
 	    <dd><input type=text name=username size=30 value="{{ request.form.username}}"> </dd>
 	    <dt>密码:	 </dt>
 	    <dd><input type=password name=password size=30> </dd>
+	    <dt>验证码：<img id="verify" src="{% url 'booklibrary:verify' %}" alt="url不正确"></dt>
+	    <dd><input type="text" name="verifycode"></dd>
 	  </dl>
 	  <div class=actions>
 	    <input type=submit value="登录">

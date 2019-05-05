@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'active/(.*?)/$',views.active,name='active'),
     url(r'^ajax/$',views.ajax,name='ajax'),
     url(r'^ajaxajax/$',views.ajaxajax,name='ajaxajax'),
+    url(r'^verify/$',views.verify,name='verify'),
+    url(r'^echarts/$',views.echarts,name='echarts'),
 
 ]
 
